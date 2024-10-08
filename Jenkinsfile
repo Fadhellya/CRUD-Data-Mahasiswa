@@ -9,11 +9,8 @@ pipeline {
         PHPMYADMIN_CONTAINER_NAME = 'phpmyadmin_sample'
         DOCKER_USERNAME = credentials('usernamedocker')
         DOCKER_PASSWORD = credentials('passworddocker')
-        REMOTE_HOST = '10.20.10.245'
-        REMOTE_USER = 'master'
         DB_PASS = credentials('dbpassword')
         DB_NAME = credentials('dbname')
-        SSH_KEY_ID = 'ssh-key'  // Credentials ID for the SSH key
         DB_USER = 'student'
         DB_HOST = "${DB_CONTAINER_NAME}"
         DB_PORT_CONTAINER = '3306'
@@ -55,32 +52,51 @@ pipeline {
             }
         }
 
-        stage('Deploy Docker Container on Remote Server') {
+        stage('Deploy Docker Containers') {
             steps {
                 script {
-                    echo "Deploying Docker Container on Remote Server"
-                    echo "Remote Host: ${REMOTE_HOST}"
+                    echo "Deploying Docker Containers on Local Server"
+                    
+                    // Hentikan dan hapus kontainer yang ada
+                    sh '''
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
+                    docker stop ${PHPMYADMIN_CONTAINER_NAME} || true
+                    docker rm ${PHPMYADMIN_CONTAINER_NAME} || true
+                    docker stop ${DB_CONTAINER_NAME} || true
+                    docker rm ${DB_CONTAINER_NAME} || true
+                    docker volume create ${DB_VOLUME_NAME} || true
+                    docker network create ${DB_NETWORK_NAME} || true
+                    '''
 
-                    // Use SSH key for remote login
-                    withCredentials([file(credentialsId: "${SSH_KEY_ID}", variable: 'SSH_KEY')]) {
-                        sh '''
-                        ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} <<EOF
-echo "${DOCKER_PASSWORD}" | sudo -S docker login -u ${DOCKER_USERNAME} --password-stdin
-sudo -S docker stop ${CONTAINER_NAME} || true
-sudo -S docker rm ${CONTAINER_NAME} || true
-sudo -S docker stop ${PHPMYADMIN_CONTAINER_NAME} || true
-sudo -S docker rm ${PHPMYADMIN_CONTAINER_NAME} || true
-sudo -S docker stop ${DB_CONTAINER_NAME} || true
-sudo -S docker rm ${DB_CONTAINER_NAME} || true
-sudo -S docker volume create ${DB_VOLUME_NAME} || true
-sudo -S docker network create ${DB_NETWORK_NAME} || true
-sudo -S docker pull ${IMAGE_NAME}
-sudo -S docker run -d -p ${DB_PORT_CONTAINER} --name ${DB_CONTAINER_NAME} --restart unless-stopped -e MARIADB_ROOT_PASSWORD=${DB_PASS} -e MARIADB_USER=${DB_USER} -e MARIADB_PASSWORD=${DB_PASS} -e MARIADB_DATABASE=${DB_NAME} --network ${DB_NETWORK_NAME} -v ${DB_VOLUME_NAME}:/var/lib/mysql docker.io/mariadb
-sudo -S docker run -d -p ${PHPMYADMIN_PORT_HOST}:${PHPMYADMIN_PORT_CONTAINER} -e PMA_HOST=${DB_CONTAINER_NAME} --name ${PHPMYADMIN_CONTAINER_NAME} --restart unless-stopped --network ${DB_NETWORK_NAME} docker.io/phpmyadmin
-sudo -S docker run -d --name ${CONTAINER_NAME} --network ${DB_NETWORK_NAME} -p ${APP_PORT_HOST}:${APP_PORT_CONTAINER} --restart unless-stopped -e DB_HOST=${DB_HOST} -e DB_USER=${DB_USER} -e DB_PASS=${DB_PASS} -e DB_NAME=${DB_NAME} ${IMAGE_NAME}
-EOF
-                        '''
-                    }
+                    // Menjalankan kontainer database MariaDB
+                    sh '''
+                    docker run -d -p ${DB_PORT_CONTAINER} --name ${DB_CONTAINER_NAME} --restart unless-stopped \
+                    -e MARIADB_ROOT_PASSWORD=${DB_PASS} \
+                    -e MARIADB_USER=${DB_USER} \
+                    -e MARIADB_PASSWORD=${DB_PASS} \
+                    -e MARIADB_DATABASE=${DB_NAME} \
+                    --network ${DB_NETWORK_NAME} \
+                    -v ${DB_VOLUME_NAME}:/var/lib/mysql docker.io/mariadb
+                    '''
+
+                    // Menjalankan kontainer phpMyAdmin
+                    sh '''
+                    docker run -d -p ${PHPMYADMIN_PORT_HOST}:${PHPMYADMIN_PORT_CONTAINER} \
+                    -e PMA_HOST=${DB_CONTAINER_NAME} \
+                    --name ${PHPMYADMIN_CONTAINER_NAME} --restart unless-stopped \
+                    --network ${DB_NETWORK_NAME} docker.io/phpmyadmin
+                    '''
+
+                    // Menjalankan kontainer aplikasi
+                    sh '''
+                    docker run -d --name ${CONTAINER_NAME} --network ${DB_NETWORK_NAME} \
+                    -p ${APP_PORT_HOST}:${APP_PORT_CONTAINER} --restart unless-stopped \
+                    -e DB_HOST=${DB_HOST} \
+                    -e DB_USER=${DB_USER} \
+                    -e DB_PASS=${DB_PASS} \
+                    -e DB_NAME=${DB_NAME} ${IMAGE_NAME}
+                    '''
                 }
             }
         }
