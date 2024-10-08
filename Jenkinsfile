@@ -14,7 +14,7 @@ pipeline {
         DB_USER = 'student'
         DB_HOST = "${DB_CONTAINER_NAME}"
         DB_PORT_CONTAINER = '3306'
-        PHPMYADMIN_PORT_HOST = '8080'
+        PHPMYADMIN_PORT_HOST = '8081'
         PHPMYADMIN_PORT_CONTAINER = '80'
         APP_PORT_HOST = '80'
         APP_PORT_CONTAINER = '80'
