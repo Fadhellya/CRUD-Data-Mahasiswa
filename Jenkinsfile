@@ -10,7 +10,7 @@ pipeline {
         DOCKER_USERNAME = credentials('usernamedocker')
         DOCKER_PASSWORD = credentials('passworddocker')
         REMOTE_HOST = '10.20.10.245'
-        REMOTE_USER = 'master'
+        REMOTE_USER = 'root'
         DB_PASS = credentials('dbpassword')
         DB_NAME = credentials('dbname')
         SSH_KEY_ID = 'ssh-key'  // Credentials ID for the SSH key
