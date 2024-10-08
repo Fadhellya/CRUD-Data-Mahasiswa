@@ -1,4 +1,39 @@
-<!-- Untuk edit data mahasiswa -->
+<?php
+ob_start(); // Memulai output buffering
+include "koneksi.php"; // Pastikan koneksi ke database sudah benar
+
+// Mengambil data mahasiswa berdasarkan NIM
+$editData = mysqli_query($connect, "SELECT * FROM mahasiswa WHERE nim='$_GET[nim]'");
+$d = mysqli_fetch_array($editData);
+
+$error_message = ''; // Inisialisasi variabel untuk pesan kesalahan
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Mengambil data dari form
+    $nim = $_POST['nim'];
+    $nama = $_POST['nama'];
+    $jk = $_POST['jk'];
+    $prodi = $_POST['prodi'];
+    $alamat = $_POST['alamat'];
+
+    // Query untuk mengupdate data ke database
+    $update = mysqli_query($connect, "UPDATE mahasiswa SET 
+                nama='$nama', jk='$jk', prodi='$prodi', alamat='$alamat' 
+                WHERE nim='$nim'");
+    
+    // Cek apakah query berhasil
+    if ($update) {
+        header('location:data_mhs.php'); // Redirect jika sukses
+        exit(); // Menghentikan eksekusi skrip setelah header
+    } else {
+        // Menyimpan pesan kesalahan dalam variabel
+        $error_message = "Gagal Mengupdate Data Mahasiswa: " . mysqli_error($connect);
+    }
+}
+
+ob_end_flush(); // Menghentikan output buffering
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -65,16 +100,17 @@
         .form-group {
             margin-bottom: 15px;
         }
+
+        /* Styling untuk pesan kesalahan */
+        .error-message {
+            color: red;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
     <h3>Edit Data Mahasiswa</h3>
-    <?php
-    include "koneksi.php";
-    $editData = mysqli_query($connect, "SELECT * FROM mahasiswa WHERE nim='$_GET[nim]'");
-    $d = mysqli_fetch_array($editData);
-    ?>
     <form method="POST" action="">
         <table>
             <tr>
@@ -88,14 +124,8 @@
             <tr>
                 <td>Jenis Kelamin</td>
                 <td>
-                    <?php if ($d['jk'] == 'L') {
-                        echo '<input type="radio" name="jk" value="L" checked="checked"> Laki-Laki';
-                        echo '<input type="radio" name="jk" value="P"> Perempuan';
-                    } else {
-                        echo '<input type="radio" name="jk" value="L"> Laki-Laki';
-                        echo '<input type="radio" name="jk" value="P" checked="checked"> Perempuan';
-                    }
-                    ?>
+                    <input type="radio" name="jk" value="L" <?php echo ($d['jk'] == 'L') ? 'checked' : ''; ?>> Laki-Laki
+                    <input type="radio" name="jk" value="P" <?php echo ($d['jk'] == 'P') ? 'checked' : ''; ?>> Perempuan
                 </td>
             </tr>
             <tr>
@@ -123,15 +153,9 @@
     </form>
 
     <?php
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $update = mysqli_query($connect, "UPDATE mahasiswa SET nama='$_POST[nama]', jk='$_POST[jk]', 
-                    prodi='$_POST[prodi]', alamat='$_POST[alamat]' WHERE nim='$_POST[nim]'");
-        if ($update) {
-            header('location:data_mhs.php');
-            exit();
-        } else {
-            echo "Gagal Mengupdate Data Mahasiswa !!!";
-        }
+    // Tampilkan pesan kesalahan jika ada
+    if (!empty($error_message)) {
+        echo "<p class='error-message'>$error_message</p>";
     }
     ?>
 </body>
