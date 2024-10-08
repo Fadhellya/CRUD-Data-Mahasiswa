@@ -63,7 +63,7 @@ pipeline {
 
                     // Menggunakan SSH dengan password untuk login ke server remote
                     sh '''
-                    sshpass -p "${REMOTE_PASSWORD}" ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} <<EOF
+                    sshpass -p "${DB_PASS}" ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} <<EOF
 echo "${DOCKER_PASSWORD}" | sudo -S docker login -u ${DOCKER_USERNAME} --password-stdin
 sudo -S docker stop ${CONTAINER_NAME} || true
 sudo -S docker rm ${CONTAINER_NAME} || true
