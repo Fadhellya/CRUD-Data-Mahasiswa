@@ -11,9 +11,9 @@ pipeline {
         DOCKER_PASSWORD = credentials('passworddocker')
         REMOTE_HOST = '10.20.10.245'
         REMOTE_USER = 'master'
-        REMOTE_PASSWORD = credentials('remotePassword')  // Menambahkan kredensial untuk password server
         DB_PASS = credentials('dbpassword')
         DB_NAME = credentials('dbname')
+        SSH_KEY_ID = 'ssh-key'  // Credentials ID for the SSH key
         DB_USER = 'student'
         DB_HOST = "${DB_CONTAINER_NAME}"
         DB_PORT_CONTAINER = '3306'
@@ -61,10 +61,10 @@ pipeline {
                     echo "Deploying Docker Container on Remote Server"
                     echo "Remote Host: ${REMOTE_HOST}"
 
-                    // Menggunakan SSH dengan password untuk login ke server remote
-                    sh '''
-                    sshpass -p "${DB_PASS}" ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} <<EOF
-${DB_PASS}
+                    // Use SSH key for remote login
+                    withCredentials([file(credentialsId: "${SSH_KEY_ID}", variable: 'SSH_KEY')]) {
+                        sh '''
+                        ssh -i ${SSH_KEY} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} <<EOF
 echo "${DOCKER_PASSWORD}" | sudo -S docker login -u ${DOCKER_USERNAME} --password-stdin
 sudo -S docker stop ${CONTAINER_NAME} || true
 sudo -S docker rm ${CONTAINER_NAME} || true
@@ -79,7 +79,8 @@ sudo -S docker run -d -p ${DB_PORT_CONTAINER} --name ${DB_CONTAINER_NAME} --rest
 sudo -S docker run -d -p ${PHPMYADMIN_PORT_HOST}:${PHPMYADMIN_PORT_CONTAINER} -e PMA_HOST=${DB_CONTAINER_NAME} --name ${PHPMYADMIN_CONTAINER_NAME} --restart unless-stopped --network ${DB_NETWORK_NAME} docker.io/phpmyadmin
 sudo -S docker run -d --name ${CONTAINER_NAME} --network ${DB_NETWORK_NAME} -p ${APP_PORT_HOST}:${APP_PORT_CONTAINER} --restart unless-stopped -e DB_HOST=${DB_HOST} -e DB_USER=${DB_USER} -e DB_PASS=${DB_PASS} -e DB_NAME=${DB_NAME} ${IMAGE_NAME}
 EOF
-                    '''
+                        '''
+                    }
                 }
             }
         }
