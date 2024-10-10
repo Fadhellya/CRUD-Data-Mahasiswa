@@ -1,9 +1,13 @@
 FROM php:8.2-apache
 
-# Install necessary PHP extensions and MySQL client
-RUN apt-get update && apt-get install -y \
-    mysql-client \
-    && docker-php-ext-install mysqli pdo pdo_mysql
+# Install dependencies to allow using apt and MySQL client
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    default-mysql-client; \
+    docker-php-ext-install mysqli pdo pdo_mysql; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy your application files to the container
 COPY . /var/www/html/
