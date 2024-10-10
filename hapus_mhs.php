@@ -6,7 +6,7 @@ session_start();
 include "koneksi.php";
 
 // Sanitasi dan validasi input NIM dari URL
-$nim = filter_input(INPUT_GET, 'nim', FILTER_SANITIZE_STRING);
+$nim = filter_input(INPUT_GET, 'nim', FILTER_SANITIZE_SPECIAL_CHARS);
 
 if ($nim) {
     // Persiapkan statement untuk menghindari SQL Injection
