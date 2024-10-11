@@ -47,7 +47,7 @@ pipeline {
                     // Use kubectl to apply Kubernetes deployment manifests
                     sh '''
                     export KUBECONFIG=$KUBE_CONFIG
-                    kubectl set image deployment/sample-deployment sample-container=${IMAGE_NAME} --record
+                    kubectl set image deployment/sample-web sample-web=${IMAGE_NAME} --record
                     '''
                 }
             }
