@@ -4,7 +4,6 @@ pipeline {
         DOCKER_USERNAME = credentials('usernamedocker')
         DOCKER_PASSWORD = credentials('passworddocker')
         KUBE_CONFIG = credentials('KUBE_KONFIG')  // Add Kubernetes kubeconfig file to Jenkins credentials
-        VERSION_FILE = '/home/master/ImageVersion/version.txt' // File to store the current version
     }
 
     options {
@@ -18,32 +17,15 @@ pipeline {
             }
         }
 
-        stage('Read Current Version') {
+        stage('Generate Date-Based Tag') {
             steps {
                 script {
-                    // Check if version.txt exists
-                    if (fileExists(VERSION_FILE)) {
-                        // Read the current version
-                        env.CURRENT_VERSION = readFile(VERSION_FILE).trim()
-                    } else {
-                        // If it doesn't exist, start with version 0.01
-                        env.CURRENT_VERSION = '0.01'
-                    }
-                    
-                    // Increment the version
-                    def versionParts = env.CURRENT_VERSION.split('\\.')
-                    def major = versionParts[0].toInteger()
-                    def minor = versionParts[1].toInteger() + 1 // Increment minor version
-                    env.NEW_VERSION = "${major}.${minor.toString().padLeft(2, '0')}" // Format with leading zero
-                }
-            }
-        }
-
-        stage('Save New Version') {
-            steps {
-                script {
-                    // Save the new version to the version file
-                    writeFile(file: VERSION_FILE, text: env.NEW_VERSION)
+                    // Get the current date in the format YYYYMMDD
+                    def currentDate = new Date().format('yyyyMMdd')
+                    // Get the current time in hours and minutes
+                    def currentTime = new Date().format('HHmm')
+                    // Combine date and time to create a unique tag
+                    env.NEW_VERSION = "${currentDate}-${currentTime}"
                 }
             }
         }
@@ -51,7 +33,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Generate the image name using the new version
+                    // Generate the image name using the new date-based version
                     env.IMAGE_NAME = "fadhellya/sample:${env.NEW_VERSION}"
 
                     // Build the Docker image
