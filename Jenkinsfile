@@ -4,7 +4,7 @@ pipeline {
         DOCKER_USERNAME = credentials('usernamedocker')
         DOCKER_PASSWORD = credentials('passworddocker')
         KUBE_CONFIG = credentials('KUBE_KONFIG')  // Add Kubernetes kubeconfig file to Jenkins credentials
-        VERSION_FILE = 'version.txt' // File to store the current version
+        VERSION_FILE = '/home/master/ImageVersion/version.txt' // File to store the current version
     }
 
     options {
@@ -52,15 +52,12 @@ pipeline {
             steps {
                 script {
                     // Generate the image name using the new version
-                    def imageName = "fadhellya/sample:${env.NEW_VERSION}"
+                    env.IMAGE_NAME = "fadhellya/sample:${env.NEW_VERSION}"
 
                     // Build the Docker image
                     sh '''
-                    docker build -t ${imageName} .
+                    docker build -t ${IMAGE_NAME} .
                     '''
-                    
-                    // Set the image name to the environment variable for later use
-                    env.IMAGE_NAME = imageName
                 }
             }
         }
