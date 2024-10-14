@@ -103,7 +103,7 @@ ob_end_flush(); // Menghentikan output buffering
     </style>
 </head>
 <body>
-    <h3>Input Data Mahasiswa Test</h3>
+    <h3>Input Data Mahasiswa</h3>
     <form method="POST" action="">
         <table>
             <tr>
