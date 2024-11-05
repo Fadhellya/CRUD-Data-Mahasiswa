@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'master' }
     environment {
         DOCKER_USERNAME = credentials('usernamedocker')
         DOCKER_PASSWORD = credentials('passworddocker')
@@ -63,7 +63,7 @@ pipeline {
                     // Use kubectl to apply Kubernetes deployment manifests
                     sh '''
                     export KUBECONFIG=$KUBE_CONFIG
-                    kubectl set image deployment/sample-web sample-web=${IMAGE_NAME} -n dev --record
+                    kubectl set image deployment/sample-web sample-web=${IMAGE_NAME} -n prod --record
                     '''
                 }
             }
