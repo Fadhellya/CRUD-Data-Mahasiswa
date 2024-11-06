@@ -36,137 +36,120 @@ ob_end_flush(); // Menghentikan output buffering
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Input Data Mahasiswa</title>
     <style>
-        /* Reset CSS */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* CSS untuk mengatur tampilan form dan elemen lainnya */
         body {
             font-family: Arial, sans-serif;
-            background-color: #e9ecef;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: #f0f0f0;
             padding: 20px;
         }
 
         h3 {
-            color: #495057;
-            font-size: 24px;
-            text-align: center;
-            margin-bottom: 20px;
+            color: #333;
         }
 
         form {
             background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: 0 auto;
         }
 
+        table {
+            width: 100%;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Tambahkan ruang di bawah elemen */
         .form-group {
             margin-bottom: 15px;
         }
 
-        label {
-            display: block;
-            font-weight: bold;
-            color: #495057;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        select,
-        input[type="radio"] + label {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-
-        input[type="radio"] {
-            width: auto;
-            margin-right: 5px;
-        }
-
-        input[type="submit"] {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
+        /* Styling untuk pesan kesalahan */
         .error-message {
-            color: #dc3545;
+            color: red;
             text-align: center;
-            font-weight: bold;
-            margin-top: 15px;
         }
     </style>
 </head>
 <body>
+    <h3>Input Data Mahasiswa</h3>
     <form method="POST" action="">
-        <h3>Input Data Mahasiswa</h3>
-
-        <div class="form-group">
-            <label for="nim">NIM</label>
-            <input type="text" name="nim" id="nim" required>
-        </div>
-
-        <div class="form-group">
-            <label for="nama">Nama</label>
-            <input type="text" name="nama" id="nama" required>
-        </div>
-
-        <div class="form-group">
-            <label>Jenis Kelamin</label>
-            <input type="radio" name="jk" id="jk-l" value="L" required>
-            <label for="jk-l">Laki-Laki</label>
-            <input type="radio" name="jk" id="jk-p" value="P" required>
-            <label for="jk-p">Perempuan</label>
-        </div>
-
-        <div class="form-group">
-            <label for="prodi">Jurusan</label>
-            <select name="prodi" id="prodi" required>
-                <option value="">- Pilih -</option>
-                <option value="Teknik Informatika">Teknik Informatika</option>
-                <option value="Sistem Informasi">Sistem Informasi</option>
-                <option value="Manajemen Informatika">Manajemen Informatika</option>
-                <option value="Teknik Komputer">Teknik Komputer</option>
-                <option value="Komputer Akuntansi">Komputer Akuntansi</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="alamat">Alamat</label>
-            <input type="text" name="alamat" id="alamat" required>
-        </div>
-
-        <input type="submit" value="Simpan">
-
-        <?php
-        // Tampilkan pesan kesalahan jika ada
-        if (!empty($error_message)) {
-            echo "<p class='error-message'>$error_message</p>";
-        }
-        ?>
+        <table>
+            <tr>
+                <td>NIM</td>
+                <td><input type="text" name="nim" size="18" required></td>
+            </tr>
+            <tr>
+                <td>Nama</td>
+                <td><input type="text" name="nama" size="18" required></td>
+            </tr>
+            <tr>
+                <td>Jenis Kelamin</td>
+                <td>
+                    <input type="radio" name="jk" value="L" required> Laki-Laki
+                    <input type="radio" name="jk" value="P" required> Perempuan
+                </td>
+            </tr>
+            <tr>
+                <td>Jurusan</td>
+                <td>
+                    <select name="prodi" required>
+                        <option value="">- Pilih -</option>
+                        <option value="Teknik Informatika">Teknik Informatika</option>
+                        <option value="Sistem Informasi">Sistem Informasi</option>
+                        <option value="Manajemen Informatika">Manajemen Informatika</option>
+                        <option value="Teknik Komputer">Teknik Komputer</option>
+                        <option value="Komputer Akuntansi">Komputer Akuntansi</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Alamat</td>
+                <td><input type="text" name="alamat" size="18" required></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Simpan"></td>
+            </tr>
+        </table>
     </form>
+
+    <?php
+    // Tampilkan pesan kesalahan jika ada
+    if (!empty($error_message)) {
+        echo "<p class='error-message'>$error_message</p>";
+    }
+    ?>
 </body>
 </html>
