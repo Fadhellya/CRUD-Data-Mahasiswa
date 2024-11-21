@@ -16,7 +16,7 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose port 80 to make the web service available outside the container
+# Expose port 8080 to make the web service available outside the container
 EXPOSE 8080
 
 # Start Apache in the foreground
