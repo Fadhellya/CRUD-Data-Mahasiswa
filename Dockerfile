@@ -16,7 +16,11 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose port 80 to make the web service available outside the container
+# **Mengubah Apache agar berjalan di port 8080**
+RUN sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf && \
+    sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/000-default.conf
+
+# Expose port 8080
 EXPOSE 8080
 
 # Start Apache in the foreground
