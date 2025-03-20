@@ -13,3 +13,9 @@
   - password jika ada kalo tidak di kosongkan saja
   - akademik nama database.
 - Terakhir jalankan aplikasi Dil Local server anda.
+
+- ENV
+DB_HOST
+DB_USER
+DB_PASS
+DB_NAME
