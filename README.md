@@ -19,3 +19,5 @@ DB_HOST
 DB_USER
 DB_PASS
 DB_NAME
+
+Apss running 8080 port
