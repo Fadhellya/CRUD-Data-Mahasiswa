@@ -1,24 +1,35 @@
-## Panduan Penggunaan
+# Panduan Penggunaan
 
-- Buat sebuah database di `phpmyadmin` dengan nama database `akademik`
-- Lakukan <b>Import</b> database dari folder `database` kedalam database yang dibuat pada phpmyadmin
-- Buat sebuah file baru dengan nama file `koneksi.php` untuk mengatur koneksi ke database sebagai berikut :
-  ```php
-      <?php
-      $connect = mysqli_connect("hostname", "username", "password", "akademik");
-      ?>
-  ```
-  - hostnama deafult localhost
-  - username biasanya root default
-  - password jika ada kalo tidak di kosongkan saja
-  - akademik nama database.
-- Terakhir jalankan aplikasi Dil Local server anda.
+## 1. Persiapan Database
+1. Buat database baru di **phpMyAdmin** dengan nama **`akademik`**.
+2. Import file database yang terdapat di folder **`database`** ke dalam database yang telah dibuat.
 
-- ENV
-DB_HOST
-DB_USER
-DB_PASS
-DB_NAME
-DB_PORT
+## 2. Konfigurasi Koneksi Database
+Buat file baru dengan nama **`koneksi.php`** untuk mengatur koneksi ke database dengan konfigurasi berikut:
 
-Apss running 8080 port
+```php
+<?php
+$connect = mysqli_connect("hostname", "username", "password", "akademik");
+?>
+Keterangan:
+hostname: Default adalah localhost.
+
+username: Biasanya root secara default.
+
+password: Jika ada, isikan; jika tidak, biarkan kosong.
+
+akademik: Nama database yang digunakan.
+
+3. Menjalankan Aplikasi
+Pastikan aplikasi dijalankan di local server (XAMPP, WAMP, atau lainnya).
+
+Aplikasi akan berjalan pada port 8080.
+
+4. Konfigurasi Environment Variables (ENV)
+Untuk menjalankan aplikasi dengan environment variables, gunakan pengaturan berikut:
+DB_HOST=<hostname>
+DB_USER=<username>
+DB_PASS=<password>
+DB_NAME=akademik
+DB_PORT=<db-port>
+
